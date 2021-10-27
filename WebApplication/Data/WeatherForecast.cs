@@ -1,6 +1,6 @@
 using System;
 
-namespace HttpClient.Data
+namespace WebApplication.Data
 {
     public class WeatherForecast
     {

@@ -1,0 +1,119 @@
+﻿@page "/EditPage/{Id:int}"
+@using Data
+@using Microsoft.AspNetCore.Components
+@using Models
+
+@inject IPersonHandler _personHandler
+@inject NavigationManager _navMgr
+@attribute [Authorize(Policy = "SecurityLevel3")]
+
+@if (_adult == null) {
+    <p>Adult not found</p>
+} else {
+    <h3>Editing @_adult.FirstName @_adult.LastName</h3>
+
+    <EditForm Model="@_adult" OnValidSubmit="@UpdateAdult">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <h5>Personal Information</h5>
+            <div class="form-group">
+                <table class="border-bottom border-top border-dark m-2">
+                    <tr>
+                        <td class="p-1">Family Name</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.LastName"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Name</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.FirstName"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Age</td>
+                        <td class="p-1">
+                            <InputNumber @bind-Value="_adult.Age"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Gender</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.Sex"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Height</td>
+                        <td class="p-1">
+                            <InputNumber @bind-Value="_adult.Height"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Weight</td>
+                        <td class="p-1">
+                            <InputNumber @bind-Value="_adult.Weight"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Hair Color</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.HairColor"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Eye Color</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.EyeColor"/>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+            <h5>Job Information</h5>
+
+            <div class="form-group">
+                <table class="border-bottom border-top border-dark m-2">
+                    <tr>
+                        <td class="p-1">Job</td>
+                        <td class="p-1">
+                            <InputText @bind-Value="_adult.Job.JobTitle"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">Salary</td>
+                        <td class="p-1">
+                            <InputNumber @bind-Value="_adult.Job.Salary"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <p class="actions">
+                <button class="btn btn-outline-dark btn-primary" type="submit">Save Changes</button>
+            </p>
+        </EditForm>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id {
+        get; set;
+    }
+
+    private Adult _adult;
+
+    protected override async Task OnInitializedAsync( ) {
+        _adult = _personHandler.GetAdult(Id);
+    }
+
+    private void UpdateAdult( ) {
+        _personHandler.UpdateAdult(_adult);
+        _navMgr.NavigateTo("/Adults");
+    }
+
+}

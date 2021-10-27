@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HttpClient.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -10,11 +9,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using HttpClient.Data;
-using HttpClient.Data.Implementations;
-using Microsoft.AspNetCore.Components.Authorization;
+using WebApplication.Data;
 
-namespace HttpClient
+namespace WebApplication
 {
     public class Startup
     {
@@ -31,16 +28,7 @@ namespace HttpClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<IPersonHandler, PersonHandler>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SecurityLevel1", a => a.RequireClaim("Level", "1", "2", "3"));
-                options.AddPolicy("SecurityLevel2", a => a.RequireClaim("Level", "2", "3"));
-                options.AddPolicy("SecurityLevel3", a => a.RequireClaim("Level", "3"));
-            });
+            services.AddSingleton<WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
