@@ -3,7 +3,7 @@ using Models;
 using WebAPI.Models;
 using WebAPI.Models.Models;
 
-namespace WebAPI.Models
+namespace WebAPI.Models {
 
 public class Child : Person {
 
