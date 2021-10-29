@@ -2,7 +2,7 @@
 using System.Linq;
 using Models;
 
-namespace HttpClient.Data.Implementations
+namespace WebClient.Data.Implementations
 {
     public class UserService : IUserService
     {

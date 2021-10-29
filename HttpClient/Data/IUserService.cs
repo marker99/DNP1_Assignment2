@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace HttpClient.Data
+namespace WebClient.Data
 {
     public interface IUserService
     {

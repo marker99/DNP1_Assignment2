@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using Models;
 
-namespace HttpClient.Persistence
+namespace WebClient.Persistence
 {
     public class FileContext
     {

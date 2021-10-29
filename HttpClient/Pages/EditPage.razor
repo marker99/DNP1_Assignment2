@@ -108,11 +108,11 @@
     private Adult _adult;
 
     protected override async Task OnInitializedAsync( ) {
-        _adult = _personHandler.GetAdult(Id);
+        //_adult = _personHandler.GetAdult(Id); TODO: Fix Me
     }
 
     private void UpdateAdult( ) {
-        _personHandler.UpdateAdult(_adult);
+        //_personHandler.UpdateAdult(_adult); TODO: Fix Me
         _navMgr.NavigateTo("/Adults");
     }
 

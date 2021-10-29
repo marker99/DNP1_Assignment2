@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>HttpClient</RootNamespace>
+        <RootNamespace>WebClient</RootNamespace>
     </PropertyGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using WebAPI.FileData;
 using WebAPI.Models;
 
@@ -8,65 +9,64 @@ namespace WebAPI.Data.Implementations
 {
 	public class PersonHandler : IPersonHandler {
 		private static FileContext _fileContext;
-		private IList<Adult> _adults;
 
 		public PersonHandler( ) {
 			_fileContext = new( );
 		}
 
-		public async Task<bool> NewFamilyAsync(Family newFamily) {
-			Family existingFamily = _fileContext.Families.FirstOrDefault(f =>
-				f.StreetName == newFamily.StreetName && f.HouseNumber == newFamily.HouseNumber);
-			if (existingFamily == null) {
-				return false;
-			}
-			// START | Fixing IDs for Adults
-			await PopulateAdultsAsync( );
-			newFamily.Adults.ForEach(a => {
-				a.Id = _adults.Max(b => b.Id) + 1;
-				PopulateAdultsAsync( );
-			});
-			// END | Fixing IDs for Adults
-			_fileContext.Families.Add(newFamily);
-			_fileContext.SaveChanges( );
-			return true;
-		}
+		//public async Task<bool> NewFamilyAsync(Family newFamily) {
+		//	Family existingFamily = _fileContext.Adults.FirstOrDefault(f =>
+		//		f.StreetName == newFamily.StreetName && f.HouseNumber == newFamily.HouseNumber);
+		//	if (existingFamily == null) {
+		//		return false;
+		//	}
+		//	// START | Fixing IDs for Adults
+		//	await PopulateAdultsAsync( );
+		//	newFamily.Adults.ForEach(a => {
+		//		a.Id = _adults.Max(b => b.Id) + 1;
+		//		PopulateAdultsAsync( );
+		//	});
+		//	// END | Fixing IDs for Adults
+		//	_fileContext.Adults.Add(newFamily);
+		//	_fileContext.SaveChanges( );
+		//	return true;
+		//}
 
-		public async Task RemoveFamilyAsync(string streetName, int houseNumber) {
-			Family f = _fileContext.Families.FirstOrDefault(f =>
-				f.StreetName == streetName && f.HouseNumber == houseNumber);
+		//public async Task RemoveFamilyAsync(string streetName, int houseNumber) {
+		//	Family f = _fileContext.Adults.FirstOrDefault(f =>
+		//		f.StreetName == streetName && f.HouseNumber == houseNumber);
 
-			if (f == null) {
-				return;
-			}
+		//	if (f == null) {
+		//		return;
+		//	}
 
-			_fileContext.Families.Remove(f);
-			_fileContext.SaveChanges( );
-		}
+		//	_fileContext.Adults.Remove(f);
+		//	_fileContext.SaveChanges( );
+		//}
 
-		public async Task<IList<Family>> GetFamiliesAsync( ) {
-			return _fileContext.Families;
-		}
+		//public async Task<IList<Family>> GetFamiliesAsync( ) {
+		//	return _fileContext.Adults;
+		//}
 
 
-		public async Task UpdateFamilyAsync(Family updatedFamily) {
-			// Get the old Family
-			Family oldFamily = _fileContext.Families.FirstOrDefault(f =>
-				f.StreetName == updatedFamily.StreetName && f.HouseNumber == updatedFamily.HouseNumber);
-			// Get Index in list of Family
-			int familyIdx = _fileContext.Families.IndexOf(oldFamily);
-			// Remove old Family
-			_fileContext.Families.RemoveAt(familyIdx);
-			// Insert new Family
-			_fileContext.Families.Insert(familyIdx, updatedFamily);
-			_fileContext.SaveChanges( );
-		}
+		//public async Task UpdateFamilyAsync(Family updatedFamily) {
+		//	// Get the old Family
+		//	Family oldFamily = _fileContext.Adults.FirstOrDefault(f =>
+		//		f.StreetName == updatedFamily.StreetName && f.HouseNumber == updatedFamily.HouseNumber);
+		//	// Get Index in list of Family
+		//	int familyIdx = _fileContext.Adults.IndexOf(oldFamily);
+		//	// Remove old Family
+		//	_fileContext.Adults.RemoveAt(familyIdx);
+		//	// Insert new Family
+		//	_fileContext.Adults.Insert(familyIdx, updatedFamily);
+		//	_fileContext.SaveChanges( );
+		//}
 
-		public bool Exists(Family family) {
-			Family v = _fileContext.Families.FirstOrDefault(f =>
-				f.StreetName == family.StreetName && f.HouseNumber == family.HouseNumber);
-			return v != null;
-		}
+		//public bool Exists(Family family) {
+		//	Family v = _fileContext.Adults.FirstOrDefault(f =>
+		//		f.StreetName == family.StreetName && f.HouseNumber == family.HouseNumber);
+		//	return v != null;
+		//}
 
 		//public void NewAdult(Adult newAdult)
 		//{
@@ -90,9 +90,31 @@ namespace WebAPI.Data.Implementations
 		//	return a;
 		//}
 
+		public async Task NewAdultAsync(Adult newAdult)
+		{
+			int maxID = _fileContext.Adults.Max(a => a.Id);
+			newAdult.Id = maxID + 1;
+			_fileContext.Adults.Add(newAdult);
+			_fileContext.SaveChanges();
+		}
+
+		public async Task RemoveAdultAsync(int id)
+		{
+			Adult a = _fileContext.Adults.FirstOrDefault(a => a.Id == id);
+			if (a != null)
+			{
+				_fileContext.Adults.Remove(a);
+				_fileContext.SaveChanges();
+			}
+		}
+
+		public async Task<Adult> GetAdultAsync(int id)
+		{
+			return _fileContext.Adults.FirstOrDefault(a => a.Id == id);
+		}
+
 		public async Task UpdateAdultAsync(Adult updatedAdult) {
-			await PopulateAdultsAsync( );
-			Adult a = _adults.FirstOrDefault(a => a.Id == updatedAdult.Id);
+			Adult a = _fileContext.Adults.FirstOrDefault(a => a.Id == updatedAdult.Id);
 			if (a == null) {
 				return;
 			}
@@ -106,16 +128,7 @@ namespace WebAPI.Data.Implementations
 		}
 
 		// Helper Methods
-
-		// This method is purely for ensuring the Adult list is constantly up to date with the Families
-		private async Task PopulateAdultsAsync( ) {
-			_adults = new List<Adult>( );
-			IList<Family> families = await GetFamiliesAsync( );
-			foreach (Family f in families) {
-				f.Adults.ForEach(f => _adults.Add(f));
-			}
-		}
-
+		
 		// Updating each individual property for an Adult
 		// This all works due to C# being Pass-By-Reference
 		private async Task UpdateNonMatching(Adult oldA, Adult newA) {

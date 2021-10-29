@@ -5,14 +5,14 @@ using WebAPI.Models;
 
 namespace WebAPI.FileData{
 	public class FileContext {
-		public IList<Family> Families {
+		public IList<Adult> Adults {
 			get; private set;
 		}
 
-		private readonly string familiesFile = "families.json";
+		private readonly string _file = "adults.json";
 
 		public FileContext( ) {
-			Families = File.Exists(familiesFile) ? ReadData<Family>(familiesFile) : new List<Family>( );
+			Adults = File.Exists(_file) ? ReadData<Adult>(_file) : new List<Adult>( );
 		}
 
 		private IList<T> ReadData<T>(string s) {
@@ -22,8 +22,8 @@ namespace WebAPI.FileData{
 		}
 
 		public void SaveChanges( ) {
-			string jsonFamilies = JsonSerializer.Serialize(Families, new JsonSerializerOptions { WriteIndented = true });
-			using (StreamWriter outputFile = new StreamWriter(familiesFile, false)) {
+			string jsonFamilies = JsonSerializer.Serialize(Adults, new JsonSerializerOptions { WriteIndented = true });
+			using (StreamWriter outputFile = new StreamWriter(_file, false)) {
 				outputFile.Write(jsonFamilies);
 			}
 		}

@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models;
 
-namespace HttpClient.Data
+namespace WebClient.Data
 {
-    public interface IPersonHandler
-    {
-        void NewAdult(Adult newAdult);
-        void RemoveAdult(int id);
-        Adult GetAdult(int id);
-        void UpdateAdult(Adult updatedAdult);
-        IList<Adult> LoadAdults();
-    }
+	public interface IPersonHandler {
+		//Task<bool> NewFamilyAsync(Family newFamily);
+		//Task RemoveFamilyAsync(string streetName, int houseNumber);
+		//Task<IList<Family>> GetFamiliesAsync(string street, int? houseNumber );
+		//Task UpdateFamilyAsync(Family updatedFamily);
+		Task UpdateAdultAsync(Adult updatedAdult);
+		Task<IList<Adult>> GetAdultsAsync( );
+	}
+
 }

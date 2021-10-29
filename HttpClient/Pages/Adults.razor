@@ -1,6 +1,7 @@
 ﻿@page "/Adults"
 @using Data
 @using Models
+@using WebClient.Data.Implementations
 
 @inject NavigationManager _navMgr
 @inject IPersonHandler _personHandler
@@ -86,16 +87,18 @@ else
 @code {
     private IList<Adult> _allAdults;
     private IList<Adult> _shownAdults;
+    private RestClient _client;
 
     protected override async Task OnInitializedAsync()
     {
-        _allAdults = _personHandler.LoadAdults();
+        _client = new();
+        _allAdults = await _client.GetAllAdults();
         _shownAdults = _allAdults;
     }
 
     private void RemovePerson(int id)
     {
-        _personHandler.RemoveAdult(id);
+        //_personHandler.RemoveAdult(id);
         OnInitializedAsync();
     }
 

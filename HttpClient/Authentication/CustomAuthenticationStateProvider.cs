@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
-using HttpClient.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using Models;
+using WebClient.Data;
 
-namespace HttpClient.Authentication
+namespace WebClient.Authentication
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
