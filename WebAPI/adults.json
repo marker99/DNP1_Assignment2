@@ -226,32 +226,17 @@
   },
   {
     "Job": {
-      "JobTitle": "Pooper",
-      "Salary": 50000
+      "JobTitle": "student",
+      "Salary": 982
     },
     "Id": 16,
-    "FirstName": "grd",
-    "LastName": "rgg",
-    "HairColor": "Broewn",
-    "EyeColor": "bleue",
-    "Age": 5,
-    "Weight": 55,
-    "Height": 55,
-    "Sex": "F"
-  },
-  {
-    "Job": {
-      "JobTitle": "Jobless",
-      "Salary": 100000
-    },
-    "Id": 17,
-    "FirstName": "Benny",
-    "LastName": "Bob",
-    "HairColor": "BroWn",
-    "EyeColor": "Blue",
-    "Age": 69,
-    "Weight": 420,
-    "Height": 100,
-    "Sex": "M"
+    "FirstName": "Andreas",
+    "LastName": "Andersen",
+    "HairColor": "red",
+    "EyeColor": "blue",
+    "Age": 20,
+    "Weight": 63,
+    "Height": 183,
+    "Sex": "m"
   }
 ]
