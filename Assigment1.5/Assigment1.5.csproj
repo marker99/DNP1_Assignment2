@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Assigment1._5</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\_Host.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\AddAdult.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Adults.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\EditPage.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Pages\LoginPage.razor" />
+      <_ContentIncludedByDefault Remove="Shared\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Shared\NavMenu.razor" />
+      <_ContentIncludedByDefault Remove="Shared\SurveyPrompt.razor" />
+    </ItemGroup>
+
+</Project>

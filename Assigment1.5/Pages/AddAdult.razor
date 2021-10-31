@@ -1,0 +1,113 @@
+﻿@page "/AddAdult"
+@attribute [Authorize(Policy = "SecurityLevel2")]
+@using Models
+@using Data
+@using global::Models
+@using Microsoft.AspNetCore.Components
+
+@inject IPersonHandler _personHandler
+@inject NavigationManager _navMgr
+
+<h3><i>You are now adding a new Adult</i></h3>
+
+<EditForm Model="@_newAdult" OnValidSubmit="@AddNewAdult">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <h5>Personal Information</h5>
+    <div class="form-group">
+        <table class="border-bottom border-top border-dark m-2">
+            <tr>
+                <td class="p-1">Family Name</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.LastName"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Name</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.FirstName"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Age</td>
+                <td class="p-1">
+                    <InputNumber @bind-Value="_newAdult.Age"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Gender</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.Sex"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Height</td>
+                <td class="p-1">
+                    <InputNumber @bind-Value="_newAdult.Height"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Weight</td>
+                <td class="p-1">
+                    <InputNumber @bind-Value="_newAdult.Weight"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Hair Color</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.HairColor"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Eye Color</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.EyeColor"/>
+                </td>
+            </tr>
+        </table>
+
+
+    </div>
+
+    <h5>Job Information</h5>
+
+    <div class="form-group">
+        <table class="border-bottom border-top border-dark m-2">
+            <tr>
+                <td class="p-1">Job</td>
+                <td class="p-1">
+                    <InputText @bind-Value="_newAdult.Job.JobTitle" />
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">Salary</td>
+                <td class="p-1">
+                    <InputNumber @bind-Value="_newAdult.Job.Salary" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <p class="actions">
+        <button class="btn btn-outline-dark btn-primary" type="submit">Add Adult</button>
+    </p>
+</EditForm>
+
+@code {
+    private Adult _newAdult;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _newAdult = new();
+        _newAdult.Job = new Job();
+    }
+
+
+    private void AddNewAdult()
+    {
+        _personHandler.NewAdult(_newAdult);
+        _navMgr.NavigateTo("/Adults");
+    }
+
+}

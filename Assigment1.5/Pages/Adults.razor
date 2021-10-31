@@ -1,0 +1,125 @@
+﻿@page "/Adults"
+@using global::Models
+@using Assigment1._5.Data
+
+
+@inject NavigationManager _navMgr
+@inject IPersonHandler _personHandler
+@inject AuthenticationStateProvider _auth
+
+
+<h3>Adult list</h3>
+
+<p>
+    Name Search
+    <input type="text" @oninput="@((arg) => FilterByName(arg))"/>
+</p>
+
+@if (_shownAdults == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (!_shownAdults.Any())
+{
+    <p>
+        <em>No Adults exist. Please add some.</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Adult ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Hair Color</th>
+            <th>Eye Color</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Sex</th>
+            <th>Job</th>
+            <th>Salary</th>
+            <AuthorizeView Policy="SecurityLevel3">
+                <th>Delete</th>
+                <th>Edit</th>
+            </AuthorizeView>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (Adult item in _shownAdults)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.HairColor</td>
+                <td>@item.EyeColor</td>
+                <td>@item.Age</td>
+                <td>@item.Weight</td>
+                <td>@item.Height</td>
+                <td>@item.Sex</td>
+                <td>@item.Job.JobTitle</td>
+                <td>@item.Job.Salary</td>
+                <AuthorizeView Policy="SecurityLevel3">
+
+                    <td>
+                        <button @onclick="@(() => RemovePerson(item.Id))">
+                            <i class="oi oi-trash" style="color: #ff0000" />
+                        </button>
+                    </td>
+                    <td>
+                        <button @onclick="@(() => EditPerson(item.Id))">
+                            <i class="oi oi-pencil" style="color: #1b6ec2" />
+                        </button>
+                    </td>
+                </AuthorizeView>
+
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private IList<Adult> _allAdults;
+    private IList<Adult> _shownAdults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allAdults = await _personHandler.LoadAdults();
+        _shownAdults = _allAdults;
+        Adult a = _shownAdults.First();
+    }
+
+    private async void RemovePerson(int id)
+    {
+        string statusCode = await _personHandler.RemoveAdult(id);
+        OnInitializedAsync();
+    }
+
+
+    private void FilterByName(ChangeEventArgs evt)
+    {
+        string name = evt.Value?.ToString();
+
+        if (name.Length != 0)
+        {
+            _shownAdults = _allAdults.Where(a => a.FirstName.ToLower().Contains(name.ToLower()) || a.LastName.ToLower().Contains(name.ToLower())).ToList();
+        }
+        else
+        {
+            _shownAdults = _allAdults;
+        }
+    }
+
+    private void EditPerson(int id)
+    {
+        _navMgr.NavigateTo($"/EditPage/{id}");
+    }
+
+}

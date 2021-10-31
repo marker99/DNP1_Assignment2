@@ -1,0 +1,57 @@
+﻿@page "/LoginPage"
+@namespace LoginComponent
+
+@using Assigment1._5.Authentication
+
+@inject AuthenticationStateProvider _auth
+@inject NavigationManager _navMgr
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="form-group my-auto">
+            <input type="text" placeholder="username" @bind-value="_username" />
+        </div>
+        <div class="form-group my-auto ml-2 border-left border-dark pl-2">
+            <input type="password" placeholder="password" @bind-value="_password" />
+        </div>
+        <div style="color:red">@_errorMessage</div>
+
+        <a href="" @onclick="PerformLogin">
+            <button class="btn btn-outline-dark btn-primary">Log in</button>
+        </a>
+    </NotAuthorized>
+    <Authorized>
+        <a href="" @onclick="PerformLogout">
+            <button class="btn btn-outline-dark btn-primary">Log out</button>
+        </a>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string _username;
+    private string _password;
+    private string _errorMessage;
+
+    public async Task PerformLogin( )
+    {
+        _errorMessage = "";
+        try {
+            ((CustomAuthenticationStateProvider) _auth).ValidateLogin(_username, _password);
+            _username = "";
+            _password = "";
+        } catch (Exception e) {
+            _errorMessage = "Invalid Credentials";
+        }
+    }
+
+    public async Task PerformLogout( ) {
+        _errorMessage = "";
+        _username = "";
+        _password = "";
+        try {
+            ((CustomAuthenticationStateProvider) _auth).Logout( );
+            _navMgr.NavigateTo("/");
+        } catch (Exception e) { }
+    }
+
+}
