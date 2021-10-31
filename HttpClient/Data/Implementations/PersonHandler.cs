@@ -1,49 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebClient.Persistence;
 using Models;
 
 namespace WebClient.Data.Implementations
 {
 	public class PersonHandler : IPersonHandler
 	{
-		private RestClient client;
+		private static RestClient _c;
 
 		public PersonHandler()
 		{
-			client = new();
+			_c = new();
 		}
 
-		//public async Task<bool> NewFamilyAsync(Family newFamily)
-		//{
-		//	throw new System.NotImplementedException();
-		//}
-
-		//public async Task RemoveFamilyAsync(string streetName, int houseNumber)
-		//{
-		//	throw new System.NotImplementedException();
-		//}
-
-		//public async Task<IList<Family>> GetFamiliesAsync(string street, int? houseNumber)
-		//{
-		//	IList<Family> fams = await client.GetFamiliesAsync(street, houseNumber);
-		//	return fams;
-		//}
-
-		//public async Task UpdateFamilyAsync(Family updatedFamily)
-		//{
-		//	throw new System.NotImplementedException();
-		//}
-
-		public async Task UpdateAdultAsync(Adult updatedAdult)
+		public async Task NewAdult(Adult newAdult)
 		{
-			throw new System.NotImplementedException();
+			await _c.AddAdultAsync(newAdult);
+			
 		}
 
-		public async Task<IList<Adult>> GetAdultsAsync()
+		public async Task<String> RemoveAdult(int id)
 		{
-			throw new System.NotImplementedException();
+			Console.WriteLine("PersonHandler.cs | Removing Person with ID: " + id);
+			return await _c.RemoveAdultAsync(id);
+		}
+
+		public async Task<Adult> GetAdult(int id)
+		{
+			IList<Adult> a = await _c.GetAllAdults();
+			return a.FirstOrDefault(a=>a.Id==id);
+		}
+
+		public async Task UpdateAdult(Adult updatedAdult)
+		{
+			await _c.AddAdultAsync(updatedAdult);
+		}
+
+		public async Task<IList<Adult>> LoadAdults()
+		{
+			return await _c.GetAllAdults();
 		}
 	}
 }

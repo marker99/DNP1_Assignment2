@@ -1,71 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Models;
+using WebClient.Models;
 
 namespace WebClient.Data.Implementations
 {
 	public class RestClient
 	{
-		private static readonly string URL = "localhost:5001";
-
-		// public async Task<IList<Family>> GetFamiliesAsync(string streetname, int? housenumber)
-		//{
-		//	using HttpClient client = new();
-
-		//	HttpResponseMessage response;
-		//	if (streetname != null)
-		//	{
-		//		if (housenumber != null)
-		//		{
-		//			response = await client.GetAsync($"{URL}/Family?street={streetname}&houseNumber={housenumber}");
-		//		}
-		//		else
-		//		{
-		//			response = await client.GetAsync($"{URL}/Family?street={streetname}");
-		//		}
-		//	}
-		//	else
-		//	{
-		//		response = await client.GetAsync($"{URL}/Family");
-		//	}
-
-		//	if (!response.IsSuccessStatusCode)
-		//	{
-		//		throw new Exception($@"Error: {response.StatusCode}, {response.ReasonPhrase}");
-		//	}
-
-		//	string result = await response.Content.ReadAsStringAsync();
-		//	IList<Family> families = JsonSerializer.Deserialize<IList<Family>>(result, new JsonSerializerOptions
-		//	{
-		//		PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-		//	});
-
-		//	return families;
-		//}
+		private static readonly string URL = "https://localhost:5001";
 
 		public async Task<IList<Adult>> GetAllAdults()
 		{
 			using HttpClient c = new();
-			HttpResponseMessage h = await c.GetAsync($"{URL}/Family");
+			HttpResponseMessage h = await c.GetAsync($"{URL}/Adult");
 			string r = await h.Content.ReadAsStringAsync();
 			IList<Adult> adults = JsonSerializer.Deserialize<IList<Adult>>(r,
-				new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-			return adults;
-		}
-		public async Task<IList<Adult>> RemoveAdult()
-		{
-			using HttpClient c = new();
-			HttpResponseMessage h = await c.GetAsync($"{URL}/Family");
-			string r = await h.Content.ReadAsStringAsync();
-			IList<Adult> adults = JsonSerializer.Deserialize<IList<Adult>>(r,
-				new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+				new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
 			return adults;
 		}
 
-		
+		public async Task<String> RemoveAdultAsync(int adultId)
+		{
+			using HttpClient c = new();
+			HttpResponseMessage h = await c.DeleteAsync($"{URL}/Adult/{adultId}");
+			return h.StatusCode.ToString();
+		}
+
+		public async Task<String> AddAdultAsync(Adult newAdult)
+		{
+			using HttpClient client = new();
+			string todoAsJson = JsonSerializer.Serialize(newAdult);
+			StringContent todoString = new(todoAsJson, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.PostAsync($"{URL}/Adult/{newAdult.Id}", todoString);
+			return $"{response.StatusCode} | {response.Content.ReadAsStringAsync( ).Result}";
+		}
+
+		public async Task<User> LoginAsync(User user)
+		{
+			using HttpClient client = new();
+			string userAsString = JsonSerializer.Serialize(user);
+			StringContent userStringContent = new(userAsString, Encoding.UTF8, "application/json");
+			Console.WriteLine("Sending login information");
+
+			// Status er, at den simpelthen ikke kan sende... det er sku da træls
+			HttpResponseMessage response = await client.PostAsync($"{URL}/User", userStringContent);
+			
+			// Doesn't ever reach here... tf?
+			Console.WriteLine("User has been posted");
+			if (response.StatusCode == HttpStatusCode.OK)
+			{
+				return user;
+			}
+			else
+			{
+				return null;
+			}
+		}
 	}
 }

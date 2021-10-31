@@ -5,22 +5,23 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
-using Models;
-using WebClient.Data;
+using WebClient.Data.Implementations;
+using WebClient.Models;
 
 namespace WebClient.Authentication
 {
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+	public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
-		private readonly IJSRuntime jsRuntime;
-		private readonly IUserService userService;
+		private readonly IJSRuntime _jsRuntime;
+		private readonly RestClient _client;
 
 		private User cachedUser;
 
-		public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserService userService)
+		public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, RestClient client)
 		{
-			this.jsRuntime = jsRuntime;
-			this.userService = userService;
+			_jsRuntime = jsRuntime;
+			_client = client;
+			Console.WriteLine(_client);
 		}
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -28,7 +29,7 @@ namespace WebClient.Authentication
 			var identity = new ClaimsIdentity();
 			if (cachedUser == null)
 			{
-				string userAsJson = await jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
+				string userAsJson = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
 				if (!string.IsNullOrEmpty(userAsJson))
 				{
 					User tmp = JsonSerializer.Deserialize<User>(userAsJson);
@@ -51,14 +52,14 @@ namespace WebClient.Authentication
 				throw new Exception("Enter username");
 			if (string.IsNullOrEmpty(password))
 				throw new Exception("Enter password");
-
+			Console.WriteLine("Possible credentials, checking account");
 			ClaimsIdentity identity = new ClaimsIdentity();
 			try
 			{
-				User user = userService.ValidateUser(username, password);
+				User user = _client.LoginAsync(new User(username, password, 0)).Result;
 				identity = SetupClaimsForUser(user);
 				string serialisedData = JsonSerializer.Serialize(user);
-				jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
+				_jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
 				cachedUser = user;
 			}
 			catch (Exception e)
@@ -74,7 +75,7 @@ namespace WebClient.Authentication
 		{
 			cachedUser = null;
 			var user = new ClaimsPrincipal(new ClaimsIdentity());
-			jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", "");
+			_jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", "");
 			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
 		}
 

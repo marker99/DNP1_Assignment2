@@ -1,8 +1,6 @@
 ﻿@page "/EditPage/{Id:int}"
-@using Data
-@using Microsoft.AspNetCore.Components
-@using Models
-
+@using global::Models
+@using WebClient.Data
 @inject IPersonHandler _personHandler
 @inject NavigationManager _navMgr
 @attribute [Authorize(Policy = "SecurityLevel3")]
@@ -108,11 +106,11 @@
     private Adult _adult;
 
     protected override async Task OnInitializedAsync( ) {
-        //_adult = _personHandler.GetAdult(Id); TODO: Fix Me
+        _adult = await _personHandler.GetAdult(Id);
     }
 
     private void UpdateAdult( ) {
-        //_personHandler.UpdateAdult(_adult); TODO: Fix Me
+        _personHandler.UpdateAdult(_adult);
         _navMgr.NavigateTo("/Adults");
     }
 
